@@ -1,5 +1,7 @@
 package consuloretcd
 
+// Consul specific implementation.
+
 import (
 	"encoding/base64"
 	"encoding/json"

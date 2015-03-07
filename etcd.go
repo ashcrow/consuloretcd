@@ -1,5 +1,7 @@
 package consuloretcd
 
+// Etcd specific implementation.
+
 import (
 	"encoding/json"
 	"io/ioutil"

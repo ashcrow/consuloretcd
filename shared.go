@@ -1,5 +1,9 @@
+/*
+A simplistic key/value abstraction for use with Consul and Etcd.
+*/
 package consuloretcd
 
+// Items shared between implementations
 import (
 	"net/http"
 )
