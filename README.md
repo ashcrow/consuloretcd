@@ -4,6 +4,8 @@ A simplistic key/value abstraction for use with Consul and Etcd.
 
 **Warning**: This needs a lot of cleaning up and code consolidation.
 
+**Warning**: The api will probably change a lot.
+
 ## Install
 
 ```bash
@@ -29,11 +31,11 @@ func main() {
 	client := http.Client{}
 
     // Consul example
-	consul := consuloretcd.Consul{
-		Endpoint: "http://127.0.0.1",
-		Client:   client,
-		Port:     8500,
-	}
+    consul, _ := consuloretcd.NewClient(
+        "consul",
+        "http://127.0.0.1",
+        client,
+        8500)
 
     // Get a key in consul
 	consul_res1, _ := consul.GetKey("test")
@@ -43,10 +45,11 @@ func main() {
 	fmt.Println(consul_res2)
 
     // Etcd example
-	etcd := consuloretcd.Etcd{
-	    Endpoint: "http://127.0.0.1",
-        Port:     4001,
-        Client:   client}
+    etcd, _ := consuloretcd.NewClient(
+        "etcd",
+        "http://127.0.0.1",
+        client,
+        4001)
 
     // Get a key from etcd
 	etcd_res1, _ := etcd.GetKey("test")

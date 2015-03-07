@@ -1,5 +1,9 @@
 package consuloretcd
 
+import (
+	"net/http"
+)
+
 // Error map
 // The key is the error that is returned from a failed call
 // The value is a string description
@@ -13,9 +17,9 @@ var Errors map[int]string = map[int]string{
 
 // Interface to be a valid KeyValueStore
 type KeyValueStore interface {
-	makeUri() string
-	GetKey() (KeyValue, interface{})
-	PutKey() (KeyValue, interface{})
+	makeURI(string) string
+	GetKey(string) (KeyValue, interface{})
+	PutKey(string, string) (KeyValue, interface{})
 }
 
 // Key/Value abstraction used
@@ -28,4 +32,24 @@ type KeyValue struct {
 	CreateIndex int
 	ModifyIndex int
 	Value       interface{}
+}
+
+// Returns a new KeyValueStore client based on the name
+func NewClient(name string, endpoint string, client http.Client, port int) (KeyValueStore, interface{}) {
+	switch {
+	case name == "consul":
+		return Consul{
+			Endpoint: endpoint,
+			Client:   client,
+			Port:     port,
+		}, nil
+	case name == "etcd":
+		return Etcd{
+			Endpoint: endpoint,
+			Client:   client,
+			Port:     port,
+		}, nil
+	default:
+		return nil, 1
+	}
 }
