@@ -17,11 +17,6 @@ type Consul struct {
 	Config
 }
 
-/*{	Endpoint string
-	Client   http.Client
-	Port     int
-}*/
-
 // Makes the URI from the Consul struct
 // Returns the full URI as a string
 func (c Consul) makeURI(name string) string {
@@ -79,7 +74,7 @@ func (c Consul) GetKey(name string) (KeyValue, error) {
 	return c.checkAndReturn(resp, kv)
 }
 
-// Gets a key from the remote Consul server.
+// Puts a key from the remote Consul server.
 // Returns KeyValue, nil on success
 // Returns KeyValue, int (lookup via Errors) when unable to get a value
 func (c Consul) PutKey(name string, value string) (KeyValue, error) {
@@ -109,4 +104,22 @@ func (c Consul) PutKey(name string, value string) (KeyValue, error) {
 	}
 	kv.Error = 5
 	return kv, errors.New(Errors[kv.Error])
+}
+
+// Deletes a key from the remote Consul server.
+// Returns nil on success
+// Returns Error when unable to delete
+func (c Consul) DeleteKey(name string) error {
+	req, _ := http.NewRequest("DELETE", c.makeURI(name), nil)
+	resp, err := c.Client.Do(req)
+	if err != nil {
+		return errors.New(Errors[6])
+	}
+	// Close the body at the end
+	defer resp.Body.Close()
+	// It's weird but 200 means it deleted ...
+	if resp.StatusCode != 200 {
+		return errors.New(Errors[6])
+	}
+	return nil
 }

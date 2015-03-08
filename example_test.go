@@ -26,10 +26,18 @@ func ExampleEtcd_PutKey() {
 	keyval, err := etcd.PutKey("keyname", "a value")
 }
 
+func ExampleEtcd_DeleteKey() {
+	err := consul.DeleteKey("keyname")
+}
+
 func ExampleConsul_GetKey() {
 	keyval, err := consul.GetKey("keyname")
 }
 
 func ExampleConsul_PutKey() {
 	keyval, err := consul.PutKey("keyname", "a value")
+}
+
+func ExampleConsul_DeleteKey() {
+	err := consul.DeleteKey("keyname")
 }

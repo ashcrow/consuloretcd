@@ -18,12 +18,14 @@ var Errors map[int]string = map[int]string{
 	3: "Unable to read response body",
 	4: "Unable to decode the value response",
 	5: "Server did not save the new key",
+	6: "Unable to delete key on the server",
 }
 
 // Interface to be a valid KeyValueStore
 type KeyValueStore interface {
 	makeURI(string) string
 	GetKey(string) (KeyValue, error)
+	DeleteKey(string) error
 	PutKey(string, string) (KeyValue, error)
 }
 

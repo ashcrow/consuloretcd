@@ -17,7 +17,7 @@ type Etcd struct {
 	Config
 }
 
-// Makes the URI from the Consul struct
+// Makes the URI from the Etcd struct
 // Returns the full URI as a string
 func (c Etcd) makeURI(name string) string {
 	return c.Endpoint + ":" + strconv.Itoa(c.Port) + "/v2/keys/" + name
@@ -42,6 +42,7 @@ func (c Etcd) GetKey(name string) (KeyValue, error) {
 		kv.StatusCode = resp.StatusCode
 		return kv, errors.New(Errors[kv.Error])
 	}
+	kv.StatusCode = resp.StatusCode
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		kv.Error = 3
@@ -88,7 +89,7 @@ func (c Etcd) PutKey(name string, value string) (KeyValue, error) {
 	// Close the body at the end
 	defer resp.Body.Close()
 	kv.StatusCode = resp.StatusCode
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != 200 && resp.StatusCode != 201 {
 		kv.Exists = false
 		kv.Error = 2
 		return kv, errors.New(Errors[kv.Error])
@@ -116,4 +117,22 @@ func (c Etcd) PutKey(name string, value string) (KeyValue, error) {
 	}
 	kv.Error = 5
 	return kv, errors.New(Errors[kv.Error])
+}
+
+// Deletes a key from the remote Etcd server.
+// Returns nil on success
+// Returns Error when unable to delete
+func (c Etcd) DeleteKey(name string) error {
+	req, _ := http.NewRequest("DELETE", c.makeURI(name), nil)
+	resp, err := c.Client.Do(req)
+	if err != nil {
+		return errors.New(Errors[6])
+	}
+	// Close the body at the end
+	defer resp.Body.Close()
+	// It's weird but 200 means it deleted ...
+	if resp.StatusCode != 200 {
+		return errors.New(Errors[6])
+	}
+	return nil
 }
