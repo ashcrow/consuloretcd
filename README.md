@@ -15,6 +15,18 @@ go get github.com/ashcrow/consuloretcd
 ## License
 See LICENSE
 
+## Documentation
+This package uses the godoc documentation system. 
+
+### HTML
+Execute the following command to start the documentation server:
+
+```bash
+godoc -http 127.0.0.1:8080 -v
+```
+
+Then visit the following URL: http://127.0.0.1:8080/pkg/github.com/ashcrow/consuloretcd/
+
 ## Example
 ```go
 package main
@@ -30,7 +42,7 @@ func main() {
     // You must provide and http.Client
 	client := http.Client{}
 
-    // Consul example
+    // Consul example. Replace "consul" with "etcd" to use etcd.
     consul, _ := consuloretcd.NewClient(
         "consul",
         consuloretcd.Config{
@@ -41,23 +53,13 @@ func main() {
     // Get a key in consul
 	consul_res1, _ := consul.GetKey("test")
 	fmt.Println(consul_res1)
+
     // Set a key in consul
 	consul_res2,  _ := consul.PutKey("test", "saa")
 	fmt.Println(consul_res2)
 
-    // Etcd example
-    consul, _ := consuloretcd.NewClient(
-        "consul",
-        consuloretcd.Config{
-            Endpoint: "http://127.0.0.1",
-            Client: client,
-            Port: 4001})
-
-    // Get a key from etcd
-	etcd_res1, _ := etcd.GetKey("test")
-	fmt.Println(etcd_res1)
-    // Set a key in etcd
-	etcd_res2, _ := etcd.PutKey("test", "saa")
-	fmt.Println(etcd_res2)
+    // Delete a key in consul
+    if err := consul.PutKey("test"); err != nil {
+	    fmt.Println(err)
+    }
 }
-```
