@@ -5,6 +5,7 @@ package consuloretcd
 
 // Items shared between implementations
 import (
+	"errors"
 	"net/http"
 )
 
@@ -46,17 +47,17 @@ type Config struct {
 }
 
 // Returns a new KeyValueStore client based on the name
-func NewClient(name string, config Config) (KeyValueStore, interface{}) {
+func NewClient(name string, config Config) (KeyValueStore, error) {
 	switch {
 	case name == "consul":
 		return Consul{
-			KeyValueStoreConfig: config,
+			Config: config,
 		}, nil
 	case name == "etcd":
 		return Etcd{
-			KeyValueStoreConfig: config,
+			Config: config,
 		}, nil
 	default:
-		return nil, 1
+		return nil, errors.New("Unknown KeyValueStore requested.")
 	}
 }
