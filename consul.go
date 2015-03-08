@@ -14,10 +14,13 @@ import (
 
 // The useable structure for Consul
 type Consul struct {
-	Endpoint string
+	Config
+}
+
+/*{	Endpoint string
 	Client   http.Client
 	Port     int
-}
+}*/
 
 // Makes the URI from the Consul struct
 // Returns the full URI as a string

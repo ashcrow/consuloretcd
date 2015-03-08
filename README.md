@@ -33,9 +33,10 @@ func main() {
     // Consul example
     consul, _ := consuloretcd.NewClient(
         "consul",
-        "http://127.0.0.1",
-        client,
-        8500)
+        consuloretcd.Config{
+            Endpoint: "http://127.0.0.1",
+            Client: client,
+            Port: 8500})
 
     // Get a key in consul
 	consul_res1, _ := consul.GetKey("test")
@@ -45,11 +46,12 @@ func main() {
 	fmt.Println(consul_res2)
 
     // Etcd example
-    etcd, _ := consuloretcd.NewClient(
-        "etcd",
-        "http://127.0.0.1",
-        client,
-        4001)
+    consul, _ := consuloretcd.NewClient(
+        "consul",
+        consuloretcd.Config{
+            Endpoint: "http://127.0.0.1",
+            Client: client,
+            Port: 4001})
 
     // Get a key from etcd
 	etcd_res1, _ := etcd.GetKey("test")

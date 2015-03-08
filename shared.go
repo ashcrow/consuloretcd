@@ -38,20 +38,23 @@ type KeyValue struct {
 	Value       interface{}
 }
 
+// Configuration for a KeyValueStore
+type Config struct {
+	Endpoint string
+	Client   http.Client
+	Port     int
+}
+
 // Returns a new KeyValueStore client based on the name
-func NewClient(name string, endpoint string, client http.Client, port int) (KeyValueStore, interface{}) {
+func NewClient(name string, config Config) (KeyValueStore, interface{}) {
 	switch {
 	case name == "consul":
 		return Consul{
-			Endpoint: endpoint,
-			Client:   client,
-			Port:     port,
+			KeyValueStoreConfig: config,
 		}, nil
 	case name == "etcd":
 		return Etcd{
-			Endpoint: endpoint,
-			Client:   client,
-			Port:     port,
+			KeyValueStoreConfig: config,
 		}, nil
 	default:
 		return nil, 1

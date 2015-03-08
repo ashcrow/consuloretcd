@@ -3,17 +3,19 @@ package consuloretcd
 func ExampleNewClient_consul() {
 	consul, err := consuloretcd.NewClient(
 		"consul",
-		"http://127.0.0.1",
-		http.Client{},
-		8500)
+		consuloretcd.Config{
+			Endpoint: "http://127.0.0.1",
+			Client:   http.Client{},
+			Port:     8500})
 }
 
 func ExampleNewClient_etcd() {
 	etcd, err := consuloretcd.NewClient(
 		"etcd",
-		"http://127.0.0.1",
-		client,
-		4001)
+		consuloretcd.Config{
+			Endpoint: "http://127.0.0.1",
+			Client:   http.Client{},
+			Port:     4001})
 }
 
 func ExampleEtcd_GetKey() {

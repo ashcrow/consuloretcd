@@ -14,9 +14,7 @@ import (
 
 // The useable structure for Etcd
 type Etcd struct {
-	Endpoint string
-	Client   http.Client
-	Port     int
+	Config
 }
 
 // Makes the URI from the Consul struct
