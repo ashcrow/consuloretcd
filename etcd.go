@@ -4,6 +4,7 @@ package consuloretcd
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -27,27 +28,26 @@ func (c Etcd) makeURI(name string) string {
 // Gets a key from the remote Etcd server.
 // Returns KeyValue, nil on success
 // Returns KeyValue, int (lookup via Errors) when unable to get a value
-func (c Etcd) GetKey(name string) (KeyValue, interface{}) {
+func (c Etcd) GetKey(name string) (KeyValue, error) {
 	kv := KeyValue{
 		Name:   name,
 		Exists: false}
 	resp, err := c.Client.Get(c.makeURI(name))
 	if err != nil {
 		kv.Error = 1
-		return kv, kv.Error
+		return kv, errors.New(Errors[kv.Error])
 	}
 	// Close the body at the end
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		kv.Exists = false
 		kv.Error = 2
 		kv.StatusCode = resp.StatusCode
-		return kv, kv.Error
+		return kv, errors.New(Errors[kv.Error])
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		kv.Error = 3
-		return kv, kv.Error
+		return kv, errors.New(Errors[kv.Error])
 	}
 	// Unmarshal the response
 	var result interface{}
@@ -69,7 +69,7 @@ func (c Etcd) GetKey(name string) (KeyValue, interface{}) {
 // Puts a key on the remote Etcd server.
 // Returns KeyValue, nil on success
 // Returns KeyValue, ERROR_CODE when unable to get a value
-func (c Etcd) PutKey(name string, value string) (KeyValue, interface{}) {
+func (c Etcd) PutKey(name string, value string) (KeyValue, error) {
 	kv := KeyValue{
 		Name:   name,
 		Exists: false}
@@ -85,7 +85,7 @@ func (c Etcd) PutKey(name string, value string) (KeyValue, interface{}) {
 	resp, err := c.Client.Do(req)
 	if err != nil {
 		kv.Error = 1
-		return kv, kv.Error
+		return kv, errors.New(Errors[kv.Error])
 	}
 	// Close the body at the end
 	defer resp.Body.Close()
@@ -93,12 +93,12 @@ func (c Etcd) PutKey(name string, value string) (KeyValue, interface{}) {
 	if resp.StatusCode != 200 {
 		kv.Exists = false
 		kv.Error = 2
-		return kv, kv.Error
+		return kv, errors.New(Errors[kv.Error])
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		kv.Error = 3
-		return kv, kv.Error
+		return kv, errors.New(Errors[kv.Error])
 	}
 
 	// Unmarshal the response
@@ -117,5 +117,5 @@ func (c Etcd) PutKey(name string, value string) (KeyValue, interface{}) {
 		return kv, nil
 	}
 	kv.Error = 5
-	return kv, kv.Error
+	return kv, errors.New(Errors[kv.Error])
 }

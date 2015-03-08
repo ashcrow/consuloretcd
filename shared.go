@@ -22,8 +22,8 @@ var Errors map[int]string = map[int]string{
 // Interface to be a valid KeyValueStore
 type KeyValueStore interface {
 	makeURI(string) string
-	GetKey(string) (KeyValue, interface{})
-	PutKey(string, string) (KeyValue, interface{})
+	GetKey(string) (KeyValue, error)
+	PutKey(string, string) (KeyValue, error)
 }
 
 // Key/Value abstraction used
