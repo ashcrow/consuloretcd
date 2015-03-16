@@ -59,7 +59,7 @@ func main() {
 	fmt.Println(consul_res2)
 
     // Delete a key in consul
-    if err := consul.PutKey("test"); err != nil {
+    if err := consul.DeleteKey("test"); err != nil {
 	    fmt.Println(err)
     }
 }
