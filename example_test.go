@@ -1,43 +1,125 @@
 package consuloretcd
 
+import (
+    "net/http"
+    "fmt"
+    "reflect"
+    "testing"
+)
+
 func ExampleNewClient_consul() {
-	consul, err := consuloretcd.NewClient(
+    // error checking omitted
+	consul, _ := NewClient(
 		"consul",
-		consuloretcd.Config{
+		Config{
 			Endpoint: "http://127.0.0.1",
 			Client:   http.Client{},
 			Port:     8500})
+    fmt.Println(reflect.TypeOf(consul))
+    // Output: consuloretcd.Consul
 }
 
 func ExampleNewClient_etcd() {
-	etcd, err := consuloretcd.NewClient(
+    // error checking omitted
+	etcd, _ := NewClient(
 		"etcd",
-		consuloretcd.Config{
+		Config{
 			Endpoint: "http://127.0.0.1",
 			Client:   http.Client{},
 			Port:     4001})
+    fmt.Println(reflect.TypeOf(etcd))
+    // Output: consuloretcd.Etcd
+}
+
+func TestNewClient_default(t *testing.T) {
+    unknown, err := NewClient(
+        "unknown",
+        Config{})
+    if unknown != nil || err == nil {
+        t.FailNow()
+    }
 }
 
 func ExampleEtcd_GetKey() {
-	keyval, err := consul.GetKey("keyname")
+    // error checking omitted
+	etcd, _ := NewClient(
+		"etcd",
+		Config{
+			Endpoint: "http://127.0.0.1",
+			Client:   http.Client{},
+			Port:     4001})
+
+	keyval, _ := etcd.GetKey("keyname")
+
+    fmt.Println(reflect.TypeOf(keyval))
+    // Output: consuloretcd.KeyValue
 }
 
 func ExampleEtcd_PutKey() {
-	keyval, err := etcd.PutKey("keyname", "a value")
+    // error checking omitted
+	etcd, _ := NewClient(
+		"etcd",
+		Config{
+			Endpoint: "http://127.0.0.1",
+			Client:   http.Client{},
+			Port:     4001})
+
+	keyval, _ := etcd.PutKey("keyname", "a value")
+
+    fmt.Println(reflect.TypeOf(keyval))
+    // Output: consuloretcd.KeyValue
 }
 
 func ExampleEtcd_DeleteKey() {
-	err := consul.DeleteKey("keyname")
+    // error checking omitted
+	etcd, _ := NewClient(
+		"etcd",
+		Config{
+			Endpoint: "http://127.0.0.1",
+			Client:   http.Client{},
+			Port:     4001})
+
+	etcd.DeleteKey("keyname")
 }
 
 func ExampleConsul_GetKey() {
-	keyval, err := consul.GetKey("keyname")
+    // error checking omitted
+	consul, _ := NewClient(
+		"consul",
+		Config{
+			Endpoint: "http://127.0.0.1",
+			Client:   http.Client{},
+			Port:     8500})
+
+	keyval, _ := consul.GetKey("keyname")
+
+    fmt.Println(reflect.TypeOf(keyval))
+    // Output: consuloretcd.KeyValue
 }
 
 func ExampleConsul_PutKey() {
-	keyval, err := consul.PutKey("keyname", "a value")
+    // error checking omitted
+	consul, _ := NewClient(
+		"consul",
+		Config{
+			Endpoint: "http://127.0.0.1",
+			Client:   http.Client{},
+			Port:     8500})
+
+	keyval, _ := consul.PutKey("keyname", "a value")
+
+    fmt.Println(reflect.TypeOf(keyval))
+    // Output: consuloretcd.KeyValue
 }
 
 func ExampleConsul_DeleteKey() {
-	err := consul.DeleteKey("keyname")
+    // error checking omitted
+	consul, _ := NewClient(
+		"consul",
+		Config{
+			Endpoint: "http://127.0.0.1",
+			Client:   http.Client{},
+			Port:     8500})
+
+	consul.DeleteKey("keyname")
 }
