@@ -16,16 +16,7 @@ go get github.com/ashcrow/consuloretcd
 See LICENSE
 
 ## Documentation
-This package uses the godoc documentation system. 
-
-### HTML
-Execute the following command to start the documentation server:
-
-```bash
-godoc -http 127.0.0.1:8080 -v
-```
-
-Then visit the following URL: http://127.0.0.1:8080/pkg/github.com/ashcrow/consuloretcd/
+Read the docs at godoc: http://godoc.org/github.com/ashcrow/consuloretcd
 
 ## Example
 ```go
