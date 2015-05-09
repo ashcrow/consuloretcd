@@ -50,7 +50,7 @@ type Config struct {
 
 // KeyOptions defines extra options when CRUDing keys.
 type KeyOptions struct {
-	CASet string
+	CASet string // Optional index that the key must be before modification
 }
 
 // Returns a new KeyValueStore client based on the name
