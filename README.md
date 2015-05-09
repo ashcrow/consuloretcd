@@ -30,27 +30,27 @@ import (
 
 // Example
 func main() {
-    // You must provide and http.Client
+	// You must provide and http.Client
 	client := http.Client{}
 
-    // Consul example. Replace "consul" with "etcd" to use etcd.
-    consul, _ := consuloretcd.NewClient(
-        "consul",
-        consuloretcd.Config{
-            Endpoint: "http://127.0.0.1",
-            Client: client,
-            Port: 8500})
+	// Consul example. Replace "consul" with "etcd" to use etcd.
+	consul, _ := consuloretcd.NewClient(
+		"consul",
+		consuloretcd.Config{
+			Endpoint: "http://127.0.0.1",
+			Client: client,
+			Port: 8500})
 
-    // Get a key in consul
-	consul_res1, _ := consul.GetKey("test")
+	// Get a key in consul
+	consul_res1, _ := consul.GetKey("test", KeyOptions{})
 	fmt.Println(consul_res1)
 
-    // Set a key in consul
-	consul_res2,  _ := consul.PutKey("test", "saa")
+	// Set a key in consul
+	consul_res2,  _ := consul.PutKey("test", "saa", KeyOptions{})
 	fmt.Println(consul_res2)
 
-    // Delete a key in consul
-    if err := consul.DeleteKey("test"); err != nil {
-	    fmt.Println(err)
-    }
+	// Delete a key in consul
+	if err := consul.DeleteKey("test", KeyOptions{}); err != nil {
+		fmt.Println(err)
+	}
 }

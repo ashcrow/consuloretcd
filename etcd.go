@@ -19,18 +19,18 @@ type Etcd struct {
 
 // Makes the URI from the Etcd struct
 // Returns the full URI as a string
-func (c Etcd) makeURI(name string) string {
+func (c Etcd) makeURI(name string, opts KeyOptions) string {
 	return c.Endpoint + ":" + strconv.Itoa(c.Port) + "/v2/keys/" + name
 }
 
 // Gets a key from the remote Etcd server.
 // Returns KeyValue, nil on success
 // Returns KeyValue, int (lookup via Errors) when unable to get a value
-func (c Etcd) GetKey(name string) (KeyValue, error) {
+func (c Etcd) GetKey(name string, opts KeyOptions) (KeyValue, error) {
 	kv := KeyValue{
 		Name:   name,
 		Exists: false}
-	resp, err := c.Client.Get(c.makeURI(name))
+	resp, err := c.Client.Get(c.makeURI(name, opts))
 	if err != nil {
 		kv.Error = 1
 		return kv, errors.New(Errors[kv.Error])
@@ -68,7 +68,7 @@ func (c Etcd) GetKey(name string) (KeyValue, error) {
 // Puts a key on the remote Etcd server.
 // Returns KeyValue, nil on success
 // Returns KeyValue, ERROR_CODE when unable to get a value
-func (c Etcd) PutKey(name string, value string) (KeyValue, error) {
+func (c Etcd) PutKey(name string, value string, opts KeyOptions) (KeyValue, error) {
 	kv := KeyValue{
 		Name:   name,
 		Exists: false}
@@ -76,7 +76,7 @@ func (c Etcd) PutKey(name string, value string) (KeyValue, error) {
 	values.Add("value", value)
 	req, _ := http.NewRequest(
 		"PUT",
-		c.makeURI(name),
+		c.makeURI(name, opts),
 		strings.NewReader(values.Encode()))
 	req.Header.Set("Content-Type",
 		"application/x-www-form-urlencoded; param=value")
@@ -122,8 +122,8 @@ func (c Etcd) PutKey(name string, value string) (KeyValue, error) {
 // Deletes a key from the remote Etcd server.
 // Returns nil on success
 // Returns Error when unable to delete
-func (c Etcd) DeleteKey(name string) error {
-	req, _ := http.NewRequest("DELETE", c.makeURI(name), nil)
+func (c Etcd) DeleteKey(name string, opts KeyOptions) error {
+	req, _ := http.NewRequest("DELETE", c.makeURI(name, opts), nil)
 	resp, err := c.Client.Do(req)
 	if err != nil {
 		return errors.New(Errors[6])
