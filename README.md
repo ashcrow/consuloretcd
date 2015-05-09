@@ -9,7 +9,7 @@ A simplistic key/value abstraction for use with Consul and Etcd.
 ## Install
 
 ```bash
-go get github.com/ashcrow/consuloretcd
+go get gopkg.in/ashcrow/consuloretcd.v0
 ```
 
 ## License
@@ -24,7 +24,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ashcrow/consuloretcd"
+	"gopkg.in/ashcrow/consuloretcd.v0"
 	"net/http"
 )
 
