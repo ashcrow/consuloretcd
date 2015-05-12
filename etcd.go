@@ -12,6 +12,13 @@ import (
 	"strings"
 )
 
+// EtcdDefaultconfig defines sane defaults for Etcd
+var EtcdDefaultConfig Config = Config{
+	Endpoint: "http://127.0.0.1",
+	Client:   http.Client{},
+	Port:     4001,
+}
+
 // The useable structure for Etcd
 type Etcd struct {
 	Config
