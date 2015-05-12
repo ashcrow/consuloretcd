@@ -9,6 +9,10 @@ import (
 	"net/http"
 )
 
+// The current version of the library
+const VERSION string = "0.0.1"
+
+
 // Error map
 // The key is the error that is returned from a failed call
 // The value is a string description
