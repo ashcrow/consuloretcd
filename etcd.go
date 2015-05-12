@@ -20,7 +20,12 @@ type Etcd struct {
 // Makes the URI from the Etcd struct
 // Returns the full URI as a string
 func (c Etcd) makeURI(name string, opts KeyOptions) string {
-	return c.Endpoint + ":" + strconv.Itoa(c.Port) + "/v2/keys/" + name
+	url := c.Endpoint + ":" + strconv.Itoa(c.Port) + "/v2/keys/" + name
+	// TODO(ashcrow): This is a hack to avoid colliding with int:0. Fix it.
+	if opts.CASet != "" {
+		url = url + "?prevIndex=" + opts.CASet
+	}
+	return url
 }
 
 // Gets a key from the remote Etcd server.
