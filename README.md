@@ -36,10 +36,7 @@ func main() {
     // Consul example. Replace "consul" with "etcd" to use etcd.
     consul, _ := consuloretcd.NewClient(
         "consul",
-        consuloretcd.Config{
-            Endpoint: "http://127.0.0.1",
-            Client: client,
-            Port: 8500})
++		consuloretcd.ConsulDefaultConfig)
 
     // Get a key in consul
 	consul_res1, _ := consul.GetKey("test")

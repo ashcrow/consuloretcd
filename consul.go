@@ -12,6 +12,13 @@ import (
 	"strings"
 )
 
+// ConsulDefaultconfig defines sane defaults for Consul
+var ConsulDefaultConfig Config = Config{
+	Endpoint: "http://127.0.0.1",
+	Client:   http.Client{},
+	Port:     8500,
+}
+
 // The useable structure for Consul
 type Consul struct {
 	Config
