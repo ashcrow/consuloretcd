@@ -40,8 +40,8 @@ func ExampleEtcd_GetKey() {
 	etcd, _ := NewClient(
 		"etcd",
 		EtcdDefaultConfig,
-	)
-	keyval, _ := etcd.GetKey("keyname")
+    )
+	keyval, _ := etcd.GetKey("keyname", KeyOptions{})
 
 	fmt.Println(reflect.TypeOf(keyval))
 	// Output: consuloretcd.KeyValue
@@ -52,8 +52,8 @@ func ExampleEtcd_PutKey() {
 	etcd, _ := NewClient(
 		"etcd",
 		EtcdDefaultConfig,
-	)
-	keyval, _ := etcd.PutKey("keyname", "a value")
+    )
+	keyval, _ := etcd.PutKey("keyname", "a value", KeyOptions{})
 
 	fmt.Println(reflect.TypeOf(keyval))
 	// Output: consuloretcd.KeyValue
@@ -65,7 +65,8 @@ func ExampleEtcd_DeleteKey() {
 		"etcd",
 		EtcdDefaultConfig,
 	)
-	etcd.DeleteKey("keyname")
+
+	etcd.DeleteKey("keyname", KeyOptions{})
 }
 
 func ExampleConsul_GetKey() {
@@ -74,7 +75,8 @@ func ExampleConsul_GetKey() {
 		"consul",
 		ConsulDefaultConfig,
 	)
-	keyval, _ := consul.GetKey("keyname")
+
+	keyval, _ := consul.GetKey("keyname", KeyOptions{})
 
 	fmt.Println(reflect.TypeOf(keyval))
 	// Output: consuloretcd.KeyValue
@@ -86,7 +88,8 @@ func ExampleConsul_PutKey() {
 		"consul",
 		ConsulDefaultConfig,
 	)
-	keyval, _ := consul.PutKey("keyname", "a value")
+
+	keyval, _ := consul.PutKey("keyname", "a value", KeyOptions{})
 
 	fmt.Println(reflect.TypeOf(keyval))
 	// Output: consuloretcd.KeyValue
@@ -98,5 +101,6 @@ func ExampleConsul_DeleteKey() {
 		"consul",
 		ConsulDefaultConfig,
 	)
-	consul.DeleteKey("keyname")
+
+	consul.DeleteKey("keyname", KeyOptions{})
 }

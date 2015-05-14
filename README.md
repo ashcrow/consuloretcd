@@ -9,7 +9,7 @@ A simplistic key/value abstraction for use with Consul and Etcd.
 ## Install
 
 ```bash
-go get github.com/ashcrow/consuloretcd
+go get gopkg.in/ashcrow/consuloretcd.v0
 ```
 
 ## License
@@ -24,13 +24,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/ashcrow/consuloretcd"
+	"gopkg.in/ashcrow/consuloretcd.v0"
 	"net/http"
 )
 
 // Example
 func main() {
-    // You must provide and http.Client
+	// You must provide and http.Client
 	client := http.Client{}
 
     // Consul example. Replace "consul" with "etcd" to use etcd.
@@ -38,16 +38,16 @@ func main() {
         "consul",
 		consuloretcd.ConsulDefaultConfig)
 
-    // Get a key in consul
-	consul_res1, _ := consul.GetKey("test")
+	// Get a key in consul
+	consul_res1, _ := consul.GetKey("test", KeyOptions{})
 	fmt.Println(consul_res1)
 
-    // Set a key in consul
-	consul_res2,  _ := consul.PutKey("test", "saa")
+	// Set a key in consul
+	consul_res2,  _ := consul.PutKey("test", "saa", KeyOptions{})
 	fmt.Println(consul_res2)
 
-    // Delete a key in consul
-    if err := consul.DeleteKey("test"); err != nil {
-	    fmt.Println(err)
-    }
+	// Delete a key in consul
+	if err := consul.DeleteKey("test", KeyOptions{}); err != nil {
+		fmt.Println(err)
+	}
 }

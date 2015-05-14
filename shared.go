@@ -9,6 +9,10 @@ import (
 	"net/http"
 )
 
+// The current version of the library
+const VERSION string = "0.0.1"
+
+
 // Error map
 // The key is the error that is returned from a failed call
 // The value is a string description
@@ -23,10 +27,10 @@ var Errors map[int]string = map[int]string{
 
 // Interface to be a valid KeyValueStore
 type KeyValueStore interface {
-	makeURI(string) string
-	GetKey(string) (KeyValue, error)
-	DeleteKey(string) error
-	PutKey(string, string) (KeyValue, error)
+	makeURI(string, KeyOptions) string
+	GetKey(string, KeyOptions) (KeyValue, error)
+	DeleteKey(string, KeyOptions) error
+	PutKey(string, string, KeyOptions) (KeyValue, error)
 }
 
 // Key/Value abstraction used
@@ -46,6 +50,11 @@ type Config struct {
 	Endpoint string
 	Client   http.Client
 	Port     int
+}
+
+// KeyOptions defines extra options when CRUDing keys.
+type KeyOptions struct {
+	CASet string // Optional index that the key must be before modification
 }
 
 // Returns a new KeyValueStore client based on the name
