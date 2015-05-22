@@ -12,7 +12,6 @@ import (
 // The current version of the library
 const VERSION string = "0.0.1"
 
-
 // Error map
 // The key is the error that is returned from a failed call
 // The value is a string description
@@ -55,6 +54,7 @@ type Config struct {
 // KeyOptions defines extra options when CRUDing keys.
 type KeyOptions struct {
 	CASet string // Optional index that the key must be before modification
+	TTL   int    // A key's time to live
 }
 
 // Returns a new KeyValueStore client based on the name

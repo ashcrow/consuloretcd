@@ -19,30 +19,39 @@ var EtcdDefaultConfig Config = Config{
 	Port:     4001,
 }
 
-// The useable structure for Etcd
+// Etcd is the useable structure for Etcd
 type Etcd struct {
 	Config
 }
 
-// Makes the URI from the Etcd struct
+// makeURI makes the URI from the Etcd struct
 // Returns the full URI as a string
 func (c Etcd) makeURI(name string, opts KeyOptions) string {
-	url := c.Endpoint + ":" + strconv.Itoa(c.Port) + "/v2/keys/" + name
-	// TODO(ashcrow): This is a hack to avoid colliding with int:0. Fix it.
-	if opts.CASet != "" {
-		url = url + "?prevIndex=" + opts.CASet
-	}
-	return url
+	return c.Endpoint + ":" + strconv.Itoa(c.Port) + "/v2/keys/" + name + "?"
 }
 
-// Gets a key from the remote Etcd server.
+// makeParams creates a url.Values instance based off the KeyOptions
+func (c Etcd) makeParams(opts KeyOptions) url.Values {
+	v := url.Values{}
+	// TODO(ashcrow): This is a hack to avoid colliding with int:0. Fix it.
+	if opts.CASet != "" {
+		v.Set("prevIndex", opts.CASet)
+	}
+	if opts.TTL != 0 {
+		v.Set("ttl", strconv.Itoa(opts.TTL))
+	}
+	return v
+}
+
+// GetKey gets a key from the remote Etcd server.
 // Returns KeyValue, nil on success
 // Returns KeyValue, int (lookup via Errors) when unable to get a value
 func (c Etcd) GetKey(name string, opts KeyOptions) (KeyValue, error) {
 	kv := KeyValue{
 		Name:   name,
 		Exists: false}
-	resp, err := c.Client.Get(c.makeURI(name, opts))
+	params := c.makeParams(opts)
+	resp, err := c.Client.Get(c.makeURI(name, opts) + "?" + params.Encode())
 	if err != nil {
 		kv.Error = 1
 		return kv, errors.New(Errors[kv.Error])
@@ -77,19 +86,20 @@ func (c Etcd) GetKey(name string, opts KeyOptions) (KeyValue, error) {
 	return kv, nil
 }
 
-// Puts a key on the remote Etcd server.
+// PutKey puts a key on the remote Etcd server.
 // Returns KeyValue, nil on success
 // Returns KeyValue, ERROR_CODE when unable to get a value
 func (c Etcd) PutKey(name string, value string, opts KeyOptions) (KeyValue, error) {
 	kv := KeyValue{
 		Name:   name,
 		Exists: false}
-	values := url.Values{}
-	values.Add("value", value)
+	params := c.makeParams(opts)
+	params.Add("value", value)
+
 	req, _ := http.NewRequest(
 		"PUT",
 		c.makeURI(name, opts),
-		strings.NewReader(values.Encode()))
+		strings.NewReader(params.Encode()))
 	req.Header.Set("Content-Type",
 		"application/x-www-form-urlencoded; param=value")
 
@@ -131,7 +141,7 @@ func (c Etcd) PutKey(name string, value string, opts KeyOptions) (KeyValue, erro
 	return kv, errors.New(Errors[kv.Error])
 }
 
-// Deletes a key from the remote Etcd server.
+// DeleteKey deletes a key from the remote Etcd server.
 // Returns nil on success
 // Returns Error when unable to delete
 func (c Etcd) DeleteKey(name string, opts KeyOptions) error {
