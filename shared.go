@@ -53,8 +53,9 @@ type Config struct {
 
 // KeyOptions defines extra options when CRUDing keys.
 type KeyOptions struct {
-	CASet string // Optional index that the key must be before modification
-	TTL   int    // A key's time to live
+	CASet    string // Optional index that the key must be before modification
+	TTL      int    // A key's time to live
+	CSession string // Consul session. Only used with Consul.
 }
 
 // Returns a new KeyValueStore client based on the name

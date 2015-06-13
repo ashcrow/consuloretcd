@@ -3,11 +3,13 @@ package consuloretcd
 // Consul specific implementation.
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -24,15 +26,29 @@ type Consul struct {
 	Config
 }
 
+type Session struct {
+	TTL      string `json:"TTL"`
+	Behavior string `json:"Behavior"`
+}
+
 // Makes the URI from the Consul struct
 // Returns the full URI as a string
 func (c Consul) makeURI(name string, opts KeyOptions) string {
 	url := c.Endpoint + ":" + strconv.Itoa(c.Port) + "/v1/kv/" + name
-	// TODO(ashcrow): This is a hack to avoid colliding with int:0. Fix it.
-	if opts.CASet != "" {
-		url = url + "?cas=" + opts.CASet
+	if opts.CSession != "" {
+		url = url + "?acquire=" + opts.CSession
 	}
 	return url
+}
+
+// makeParams creates a url.Values instance based off the KeyOptions
+func (c Consul) makeParams(opts KeyOptions) url.Values {
+	v := url.Values{}
+	// TODO(ashcrow): This is a hack to avoid colliding with int:0. Fix it.
+	if opts.CASet != "" {
+		v.Set("cas", opts.CASet)
+	}
+	return v
 }
 
 func (c Consul) checkAndReturn(resp *http.Response, kv KeyValue) (KeyValue, error) {
@@ -75,7 +91,7 @@ func (c Consul) GetKey(name string, opts KeyOptions) (KeyValue, error) {
 	kv := KeyValue{
 		Name:   name,
 		Exists: false}
-	resp, err := c.Client.Get(c.makeURI(name, opts))
+	resp, err := c.Client.Get(c.makeURI(name, opts) + "?" + c.makeParams(opts).Encode())
 	if err != nil {
 		kv.Error = 1
 
@@ -93,6 +109,20 @@ func (c Consul) PutKey(name string, value string, opts KeyOptions) (KeyValue, er
 	kv := KeyValue{
 		Name:   name,
 		Exists: false}
+	// TODO(ashcrow): We should probably allow 0 in the future
+	if opts.TTL != 0 {
+		// This means we need a session created as it controls the TTL
+		// TODO(ashcrow): error checking through here
+		ep := c.Endpoint + ":" + strconv.Itoa(c.Port) + "/v1/session/create"
+		jd, _ := json.Marshal(Session{TTL: strconv.Itoa(opts.TTL) + "s", Behavior: "delete"})
+		sess_req, _ := http.NewRequest("PUT", ep, bytes.NewReader(jd))
+		sess_resp, _ := c.Client.Do(sess_req)
+		defer sess_resp.Body.Close()
+		body, _ := ioutil.ReadAll(sess_resp.Body)
+		var result map[string]string
+		json.Unmarshal(body, &result)
+		opts.CSession = result["ID"]
+	}
 	req, _ := http.NewRequest("PUT", c.makeURI(name, opts), strings.NewReader(value))
 	resp, err := c.Client.Do(req)
 	if err != nil {
