@@ -112,18 +112,39 @@ func (c Consul) PutKey(name string, value string, opts KeyOptions) (KeyValue, er
 	// TODO(ashcrow): We should probably allow 0 in the future
 	if opts.TTL != 0 {
 		// This means we need a session created as it controls the TTL
-		// TODO(ashcrow): error checking through here
 		ep := c.Endpoint + ":" + strconv.Itoa(c.Port) + "/v1/session/create"
-		jd, _ := json.Marshal(Session{TTL: strconv.Itoa(opts.TTL) + "s", Behavior: "delete"})
+		jd, err := json.Marshal(Session{TTL: strconv.Itoa(opts.TTL) + "s", Behavior: "delete"})
+		if err != nil {
+			kv.Error = 7
+			return kv, errors.New(Errors[kv.Error])
+		}
 		sess_req, _ := http.NewRequest("PUT", ep, bytes.NewReader(jd))
-		sess_resp, _ := c.Client.Do(sess_req)
+		sess_resp, err := c.Client.Do(sess_req)
+		if err != nil {
+			kv.Error = 8
+			return kv, errors.New(Errors[kv.Error])
+		}
+
 		defer sess_resp.Body.Close()
-		body, _ := ioutil.ReadAll(sess_resp.Body)
+		body, err := ioutil.ReadAll(sess_resp.Body)
+		if err != nil {
+			kv.Error = 3
+			return kv, errors.New(Errors[kv.Error])
+		}
+
 		var result map[string]string
-		json.Unmarshal(body, &result)
+		if err := json.Unmarshal(body, &result); err != nil {
+			kv.Error = 4
+			return kv, errors.New(Errors[kv.Error])
+		}
 		opts.CSession = result["ID"]
 	}
-	req, _ := http.NewRequest("PUT", c.makeURI(name, opts), strings.NewReader(value))
+	req, err := http.NewRequest("PUT", c.makeURI(name, opts), strings.NewReader(value))
+	if err != nil {
+		kv.Error = 8
+		return kv, errors.New(Errors[kv.Error])
+	}
+
 	resp, err := c.Client.Do(req)
 	if err != nil {
 		kv.Error = 1

@@ -40,7 +40,7 @@ func ExampleEtcd_GetKey() {
 	etcd, _ := NewClient(
 		"etcd",
 		EtcdDefaultConfig,
-    )
+	)
 	keyval, _ := etcd.GetKey("keyname", KeyOptions{})
 
 	fmt.Println(reflect.TypeOf(keyval))
@@ -52,7 +52,7 @@ func ExampleEtcd_PutKey() {
 	etcd, _ := NewClient(
 		"etcd",
 		EtcdDefaultConfig,
-    )
+	)
 	keyval, _ := etcd.PutKey("keyname", "a value", KeyOptions{})
 
 	fmt.Println(reflect.TypeOf(keyval))

@@ -22,6 +22,8 @@ var Errors map[int]string = map[int]string{
 	4: "Unable to decode the value response",
 	5: "Server did not save the new key",
 	6: "Unable to delete key on the server",
+	7: "Unable to encode JSON",
+	8: "Unable to put key on the server",
 }
 
 // Interface to be a valid KeyValueStore
