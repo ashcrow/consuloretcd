@@ -9,11 +9,14 @@ A simplistic key/value abstraction for use with Consul and Etcd.
 ## Install
 
 ```bash
-go get gopkg.in/ashcrow/consuloretcd.v0
+go get gopkg.in/ashcrow/consuloretcd.v1
 ```
-
 ## License
-See LICENSE
+MIT. See LICENSE.
+
+## Features
+* Consistent key/value API
+* Consistent TTL support
 
 ## Documentation
 Read the docs at godoc: http://godoc.org/github.com/ashcrow/consuloretcd
@@ -24,7 +27,7 @@ package main
 
 import (
 	"fmt"
-	"gopkg.in/ashcrow/consuloretcd.v0"
+	"gopkg.in/ashcrow/consuloretcd.v1"
 	"net/http"
 )
 
