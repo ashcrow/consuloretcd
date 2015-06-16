@@ -12,7 +12,6 @@ import (
 // The current version of the library
 const VERSION string = "0.0.1"
 
-
 // Error map
 // The key is the error that is returned from a failed call
 // The value is a string description
@@ -23,6 +22,8 @@ var Errors map[int]string = map[int]string{
 	4: "Unable to decode the value response",
 	5: "Server did not save the new key",
 	6: "Unable to delete key on the server",
+	7: "Unable to encode JSON",
+	8: "Unable to put key on the server",
 }
 
 // Interface to be a valid KeyValueStore
@@ -54,7 +55,9 @@ type Config struct {
 
 // KeyOptions defines extra options when CRUDing keys.
 type KeyOptions struct {
-	CASet string // Optional index that the key must be before modification
+	CASet    string // Optional index that the key must be before modification
+	TTL      int    // A key's time to live
+	CSession string // Consul session. Only used with Consul.
 }
 
 // Returns a new KeyValueStore client based on the name
